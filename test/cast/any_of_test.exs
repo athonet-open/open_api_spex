@@ -170,7 +170,7 @@ defmodule OpenApiSpex.CastAnyOfTest do
         "password" => "12345678"
       }
 
-      assert {:error, [error_any_of, error_age]} =
+      assert {:error, [error_age]} =
                OpenApiSpex.Cast.AnyOf.cast(
                  struct(OpenApiSpex.Cast,
                    value: value,
@@ -178,9 +178,6 @@ defmodule OpenApiSpex.CastAnyOfTest do
                    schemas: %{"User" => Schemas.User.schema()}
                  )
                )
-
-      assert Error.message(error_any_of) ==
-               "Failed to cast value using any of: Schema(title: \"User\", type: :object)"
 
       assert Error.message(error_age) ==
                "Missing field: age"
