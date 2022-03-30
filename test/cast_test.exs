@@ -240,6 +240,17 @@ defmodule OpenApiSpec.CastTest do
 
       assert {:ok, %{data: "default"}} == cast(value: %{}, schema: schema)
     end
+
+    test "nil value with xxxOf" do
+      schema = %Schema{anyOf: [%Schema{nullable: true, type: :string}]}
+      assert {:ok, nil} = cast(value: nil, schema: schema)
+
+      schema = %Schema{allOf: [%Schema{nullable: true, type: :string}]}
+      assert {:ok, nil} = cast(value: nil, schema: schema)
+
+      schema = %Schema{oneOf: [%Schema{nullable: true, type: :string}]}
+      assert {:ok, nil} = cast(value: nil, schema: schema)
+    end
   end
 
   describe "ok/1" do
