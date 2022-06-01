@@ -60,7 +60,12 @@ defmodule OpenApiSpex.Cast.Discriminator do
   defp cast_composition(composite_ctx, ctx, discriminator_value, mappings) do
     with {composite_schemas, cast_composition_result} <- cast_composition(composite_ctx),
          {:ok, _} <- cast_composition_result,
-         %{} = schema <- find_discriminator_schema(discriminator_value, mappings, composite_schemas) do
+         %{} = schema <-
+           find_discriminator_schema(
+             discriminator_value,
+             mappings,
+             composite_schemas
+           ) do
       Cast.cast(%{composite_ctx | schema: schema})
     else
       nil -> error(:invalid_discriminator_value, ctx)
@@ -93,7 +98,11 @@ defmodule OpenApiSpex.Cast.Discriminator do
     end
   end
 
-  defp find_discriminator_schema(discriminator, _, schemas) do
+  defp find_discriminator_schema(discriminator, _, schemas) when is_atom(discriminator) do
+    Enum.find(schemas, &Kernel.==(&1."x-struct", discriminator))
+  end
+
+  defp find_discriminator_schema(discriminator, _, schemas) when is_binary(discriminator) do
     Enum.find(schemas, &Kernel.==(&1.title, discriminator))
   end
 
