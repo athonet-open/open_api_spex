@@ -253,6 +253,23 @@ defmodule OpenApiSpec.CastTest do
     end
   end
 
+  describe "opts" do
+    test "read_write_scope" do
+      schema = %Schema{
+        type: :object,
+        properties: %{
+          id: %Schema{type: :string, readOnly: true},
+          age: %Schema{type: :integer}
+        },
+        required: [:id, :age]
+      }
+
+      value = %{"age" => 30}
+      assert {:error, _} = Cast.cast(schema, value, %{}, [])
+      assert {:ok, %{age: 30}} == Cast.cast(schema, value, %{}, read_write_scope: :write)
+    end
+  end
+
   describe "ok/1" do
     test "basics" do
       assert {:ok, 1} = Cast.ok(%Cast{value: 1})
